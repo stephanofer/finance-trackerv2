@@ -11,6 +11,7 @@ import {
   ArrowLeftRight,
   Target,
   CreditCard,
+  ScanLine,
 } from "lucide-react";
 import {
   Sheet,
@@ -110,7 +111,17 @@ export function BottomNavigation() {
 
   return (
     <>
-      <nav className="bottom-nav">
+      {/* Floating Scan Button */}
+      <Link
+        to="/scan"
+        className="scan-button animate-in fade-in slide-in-from-bottom-4 duration-500"
+        style={{ animationDelay: "0.2s" }}
+      >
+        <ScanLine className="w-5 h-5" />
+        <span>Scan</span>
+      </Link>
+
+      <nav className="bottom-nav animate-in fade-in slide-in-from-bottom-4 duration-500">
         {/* First two items */}
         {navItems.slice(0, 2).map((item) => (
           <NavLink
@@ -132,24 +143,25 @@ export function BottomNavigation() {
               <Plus className="w-6 h-6" />
             </button>
           </SheetTrigger>
-          <SheetContent side="bottom" className="rounded-t-3xl">
+          <SheetContent side="bottom" className="rounded-t-3xl border-t border-border bg-card">
             <SheetHeader className="pb-4">
-              <SheetTitle className="text-left">Acción rápida</SheetTitle>
+              <SheetTitle className="text-left text-lg">Acción rápida</SheetTitle>
             </SheetHeader>
             <div className="grid gap-2 pb-8">
-              {quickActions.map((action) => (
+              {quickActions.map((action, index) => (
                 <Link
                   key={action.to}
                   to={action.to}
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-4 p-4 rounded-2xl hover:bg-muted/50 transition-colors"
+                  className="flex items-center gap-4 p-4 rounded-2xl hover:bg-muted/50 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] animate-in fade-in slide-in-from-bottom-2"
+                  style={{ animationDelay: `${index * 0.05}s` }}
                 >
                   <div
                     className={`w-12 h-12 rounded-xl flex items-center justify-center ${action.color}`}
                   >
                     <action.icon className="w-5 h-5" />
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <p className="font-semibold">{action.label}</p>
                     <p className="text-sm text-muted-foreground">
                       {action.description}

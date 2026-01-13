@@ -40,6 +40,7 @@ settingsRouter.get("/", async (c) => {
         incomePeriod: "month",
         recentTransactionsLimit: 5,
         balanceAccountIds: null,
+        featuredGoalId: null,
         dashboardGoalIds: null,
         showScheduledPayments: true,
         scheduledPaymentsDays: 7,

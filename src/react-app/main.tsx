@@ -24,6 +24,7 @@ const RegisterPage = lazy(() => import("@/pages/register"));
 const DashboardPage = lazy(() => import("@/pages/dashboard"));
 const MorePage = lazy(() => import("@/pages/more"));
 const ProfilePage = lazy(() => import("@/pages/profile"));
+const SettingsPage = lazy(() => import("@/pages/settings"));
 
 // ============================================
 // Loading fallback
@@ -208,10 +209,14 @@ const router = createBrowserRouter([
           },
           {
             path: "/settings",
+            element: <SettingsPage />,
+          },
+          {
+            path: "/scan",
             element: (
-              <div className="px-4 pt-6 pb-24">
-                <h1 className="text-2xl font-bold mb-4">Ajustes</h1>
-                <p className="text-muted-foreground">Próximamente...</p>
+              <div className="px-4 pt-6 pb-32">
+                <h1 className="text-2xl font-bold mb-4">Escanear Recibo</h1>
+                <p className="text-muted-foreground">Próximamente - Escanea tus recibos para registrar transacciones automáticamente</p>
               </div>
             ),
           },

@@ -63,14 +63,20 @@ export interface Goal {
   id: string;
   userId: string;
   name: string;
+  description?: string | null;
   targetAmount: number;
   currentAmount: number;
+  progress: number;
   currency: string;
-  deadline?: string | null;
-  color?: string | null;
+  targetDate?: string | null;
   icon?: string | null;
+  color?: string | null;
+  autoContributePercent?: number | null;
+  isActive: boolean;
   isCompleted: boolean;
+  completedAt?: string | null;
   createdAt: string;
+  updatedAt: string;
 }
 
 export interface Debt {
@@ -109,17 +115,37 @@ export interface ScheduledPayment {
   category?: Category | null;
 }
 
+export interface DashboardConfig {
+  expensesPeriod: "today" | "week" | "month" | "quarter" | "year";
+  incomePeriod: "today" | "week" | "month" | "quarter" | "year";
+  recentTransactionsLimit: number;
+  balanceAccountIds: string[] | null;
+  featuredGoalId: string | null;
+  dashboardGoalIds: string[] | null;
+  showScheduledPayments: boolean;
+  scheduledPaymentsDays: number;
+  widgetsOrder: string[];
+  categoryBreakdownPeriod: "week" | "month" | "quarter" | "year";
+  categoryBreakdownType: "income" | "expense";
+}
+
 export interface UserSettings {
+  id: string;
   userId: string;
   theme: "light" | "dark" | "system";
   language: string;
   dateFormat: string;
-  startOfWeek: "sunday" | "monday";
-  defaultAccountId?: string | null;
-  budgetAlertThreshold: number;
-  enableNotifications: boolean;
-  enableEmailReports: boolean;
-  reportFrequency: "daily" | "weekly" | "monthly" | "never";
+  numberFormat: string;
+  dashboardConfig: DashboardConfig;
+  notifyOnDuePayments: boolean;
+  notifyOnGoalProgress: boolean;
+  notifyOnRecurring: boolean;
+  showCentsInAmounts: boolean;
+  defaultAccountId: string | null;
+  startOfWeek: number;
+  fiscalMonthStart: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // Dashboard response types matching the actual API structure
@@ -493,9 +519,16 @@ export const transactionsApi = {
 // ============================================
 
 export const goalsApi = {
-  getAll: () => apiFetch<{ goals: Goal[] }>("/goals"),
+  getAll: (filters?: { isActive?: boolean }) => {
+    const params = new URLSearchParams();
+    if (filters?.isActive !== undefined) {
+      params.set("isActive", String(filters.isActive));
+    }
+    const query = params.toString();
+    return apiFetch<{ data: Goal[] }>(`/goals${query ? `?${query}` : ""}`);
+  },
 
-  getById: (id: string) => apiFetch<{ goal: Goal }>(`/goals/${id}`),
+  getById: (id: string) => apiFetch<{ data: Goal }>(`/goals/${id}`),
 
   create: (data: {
     name: string;
@@ -657,10 +690,16 @@ export const scheduledPaymentsApi = {
 // ============================================
 
 export const settingsApi = {
-  get: () => apiFetch<{ settings: UserSettings }>("/settings"),
+  get: () => apiFetch<{ data: UserSettings }>("/settings"),
 
   update: (data: Partial<UserSettings>) =>
-    apiFetch<{ message: string; settings: UserSettings }>("/settings", {
+    apiFetch<{ data: UserSettings }>("/settings", {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    }),
+
+  updateDashboard: (data: Record<string, unknown>) =>
+    apiFetch<{ data: UserSettings }>("/settings/dashboard", {
       method: "PATCH",
       body: JSON.stringify(data),
     }),

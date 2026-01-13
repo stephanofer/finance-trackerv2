@@ -73,6 +73,9 @@ export const updateCategorySchema = z.object({
 export const createTransactionSchema = z.object({
   accountId: z.string().uuid("ID de cuenta inválido"),
   categoryId: z.string().uuid("ID de categoría inválido").optional().nullable(),
+  subcategoryId: z.string().uuid("ID de subcategoría inválido").optional().nullable(),
+  merchantId: z.string().uuid("ID de establecimiento inválido").optional().nullable(),
+  merchantName: z.string().max(100, "Nombre muy largo").optional().nullable(),
   type: z.enum(["income", "expense", "debt_payment", "goal_contribution", "loan_payment"]),
   amount: z.number().positive("El monto debe ser positivo"),
   description: z.string().optional(),
@@ -86,6 +89,9 @@ export const createTransactionSchema = z.object({
 export const updateTransactionSchema = z.object({
   accountId: z.string().uuid().optional(),
   categoryId: z.string().uuid().optional().nullable(),
+  subcategoryId: z.string().uuid().optional().nullable(),
+  merchantId: z.string().uuid().optional().nullable(),
+  merchantName: z.string().max(100).optional().nullable(),
   type: z.enum(["income", "expense", "debt_payment", "goal_contribution", "loan_payment"]).optional(),
   amount: z.number().positive().optional(),
   description: z.string().optional(),
@@ -245,6 +251,8 @@ export const dashboardConfigSchema = z.object({
   recentTransactionsLimit: z.number().int().min(3).max(20).default(5),
   // Which accounts to show in balance widget (null = all)
   balanceAccountIds: z.array(z.string().uuid()).nullable().default(null),
+  // Featured goal to show prominently on dashboard (null = most recent active)
+  featuredGoalId: z.string().uuid().nullable().default(null),
   // Goals to show on dashboard (null = all active)
   dashboardGoalIds: z.array(z.string().uuid()).nullable().default(null),
   // Show scheduled payments on dashboard

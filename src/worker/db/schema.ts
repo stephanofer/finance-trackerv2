@@ -120,6 +120,35 @@ export const categoriesRelations = relations(categories, ({ one, many }) => ({
 }));
 
 // ============================================
+// MERCHANTS TABLE (Establecimientos)
+// ============================================
+export const merchants = sqliteTable("merchants", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  categoryId: text("category_id").references(() => categories.id), // Suggested default category
+  icon: text("icon"),
+  logo: text("logo"), // URL to merchant logo
+  isDefault: integer("is_default", { mode: "boolean" }).notNull().default(false),
+  createdAt: text("created_at").notNull().default(sql`(datetime('now'))`),
+}, (table) => [
+  index("merchants_user_idx").on(table.userId),
+  index("merchants_user_name_idx").on(table.userId, table.name),
+]);
+
+export const merchantsRelations = relations(merchants, ({ one, many }) => ({
+  user: one(users, {
+    fields: [merchants.userId],
+    references: [users.id],
+  }),
+  category: one(categories, {
+    fields: [merchants.categoryId],
+    references: [categories.id],
+  }),
+  transactions: many(transactions),
+}));
+
+// ============================================
 // TRANSACTIONS TABLE (The Engine)
 // ============================================
 export const transactions = sqliteTable("transactions", {
@@ -127,6 +156,9 @@ export const transactions = sqliteTable("transactions", {
   userId: text("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
   accountId: text("account_id").notNull().references(() => accounts.id),
   categoryId: text("category_id").references(() => categories.id),
+  subcategoryId: text("subcategory_id").references(() => categories.id), // Subcategory reference
+  merchantId: text("merchant_id").references(() => merchants.id), // Merchant/Establishment
+  merchantName: text("merchant_name"), // Quick merchant name without creating record
   type: text("type", { 
     enum: ["income", "expense", "debt_payment", "goal_contribution", "loan_payment"] 
   }).notNull(),
@@ -147,6 +179,8 @@ export const transactions = sqliteTable("transactions", {
   index("transactions_user_date_idx").on(table.userId, table.date),
   index("transactions_account_idx").on(table.accountId),
   index("transactions_category_idx").on(table.categoryId),
+  index("transactions_subcategory_idx").on(table.subcategoryId),
+  index("transactions_merchant_idx").on(table.merchantId),
   index("transactions_user_type_idx").on(table.userId, table.type),
 ]);
 
@@ -162,6 +196,15 @@ export const transactionsRelations = relations(transactions, ({ one }) => ({
   category: one(categories, {
     fields: [transactions.categoryId],
     references: [categories.id],
+  }),
+  subcategory: one(categories, {
+    fields: [transactions.subcategoryId],
+    references: [categories.id],
+    relationName: "transactionSubcategory",
+  }),
+  merchant: one(merchants, {
+    fields: [transactions.merchantId],
+    references: [merchants.id],
   }),
   debt: one(debts, {
     fields: [transactions.debtId],
@@ -509,6 +552,9 @@ export type NewAccount = typeof accounts.$inferInsert;
 
 export type Category = typeof categories.$inferSelect;
 export type NewCategory = typeof categories.$inferInsert;
+
+export type Merchant = typeof merchants.$inferSelect;
+export type NewMerchant = typeof merchants.$inferInsert;
 
 export type Transaction = typeof transactions.$inferSelect;
 export type NewTransaction = typeof transactions.$inferInsert;

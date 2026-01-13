@@ -1,6 +1,8 @@
 ---
+applyTo: "**/*.{tsx,jsx,css}"
 name: frontend-instructions
 description: "Advanced rules for UI/UX, animations, and modern visual design"
+
 ---
 
 # Expert Frontend & UX/UI Engineer Instructions
@@ -84,3 +86,4 @@ Before generating UI code, mentally verify:
 3.  [ ] Do transitions have appropriate `duration` and `ease`?
 4.  [ ] Does it look amazing on Mobile and Desktop?
 5.  [ ] Are numbers using `tabular-nums`?
+
