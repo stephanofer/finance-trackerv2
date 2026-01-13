@@ -1,0 +1,745 @@
+### ============================================
+### FinTrack SaaS API - REST Client File
+### ============================================
+### Para usar este archivo necesitas la extensión REST Client en VS Code
+### Después de registrarte/loguearte, copia el token de las cookies
+### y reemplaza @authToken con el valor real
+
+@baseUrl = http://localhost:5173/api
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3YzVkZGNiZi0xN2YzLTRmOGMtOTE5OC03ODdmODI5MWU1NmMiLCJlbWFpbCI6ImRlbW9AZmludHJhY2suYXBwIiwiZXhwIjoxNzc2MDIzNTUxfQ.hsNW3XEmn6_Kn6U3KcY13cD3LyS9Tz7hPR2w9c_1_JA
+
+### ============================================
+### HEALTH CHECK
+### ============================================
+
+### Check API health
+GET {{baseUrl}}/health
+
+### ============================================
+### AUTHENTICATION
+### ============================================
+
+### Register new user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "demo@fintrack.app",
+  "password": "password123",
+  "name": "Usuario Demo",
+  "currency": "PEN"
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "demo@fintrack.app",
+  "password": "password123"
+}
+
+### Get current user profile
+GET {{baseUrl}}/auth/me
+Cookie: auth_token={{authToken}}
+
+### Update user profile
+PATCH {{baseUrl}}/auth/me
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "name": "Usuario Demo Actualizado",
+  "currency": "USD"
+}
+
+### Logout
+POST {{baseUrl}}/auth/logout
+Cookie: auth_token={{authToken}}
+
+### ============================================
+### ACCOUNT TYPES
+### ============================================
+
+### List all account types
+GET {{baseUrl}}/account-types
+Cookie: auth_token={{authToken}}
+
+### Get single account type (replace :id)
+GET {{baseUrl}}/account-types/84b6f468-e9bb-46d4-9051-5e2cc10bfeac
+Cookie: auth_token={{authToken}}
+
+### Create new account type
+POST {{baseUrl}}/account-types
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "name": "Cripto",
+  "icon": "bitcoin"
+}
+
+### Update account type
+PATCH {{baseUrl}}/account-types/your-account-type-id
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "name": "Criptomonedas",
+  "icon": "coins"
+}
+
+### Delete account type
+DELETE {{baseUrl}}/account-types/your-account-type-id
+Cookie: auth_token={{authToken}}
+
+### ============================================
+### ACCOUNTS
+### ============================================
+
+### List all accounts (with calculated balances)
+GET {{baseUrl}}/accounts
+Cookie: auth_token={{authToken}}
+
+### List all accounts including inactive
+GET {{baseUrl}}/accounts?includeInactive=true
+Cookie: auth_token={{authToken}}
+
+### Get single account with balance
+GET {{baseUrl}}/accounts/your-account-id
+Cookie: auth_token={{authToken}}
+
+### Create new account
+POST {{baseUrl}}/accounts
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "accountTypeId": "your-account-type-id",
+  "name": "Mi Cuenta Principal",
+  "description": "Cuenta para gastos diarios",
+  "currency": "PEN",
+  "initialBalance": 1000,
+  "color": "#3b82f6",
+  "icon": "wallet",
+  "includeInTotal": true
+}
+
+### Update account
+PATCH {{baseUrl}}/accounts/your-account-id
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "name": "Mi Cuenta Actualizada",
+  "color": "#22c55e"
+}
+
+### Soft delete account
+DELETE {{baseUrl}}/accounts/your-account-id
+Cookie: auth_token={{authToken}}
+
+### ============================================
+### CATEGORIES
+### ============================================
+
+### List all categories (hierarchical)
+GET {{baseUrl}}/categories
+Cookie: auth_token={{authToken}}
+
+### List expense categories only
+GET {{baseUrl}}/categories?type=expense
+Cookie: auth_token={{authToken}}
+
+### List income categories only
+GET {{baseUrl}}/categories?type=income
+Cookie: auth_token={{authToken}}
+
+### List all categories flat (no hierarchy)
+GET {{baseUrl}}/categories?flat=true
+Cookie: auth_token={{authToken}}
+
+### Get single category with subcategories
+GET {{baseUrl}}/categories/your-category-id
+Cookie: auth_token={{authToken}}
+
+### Create new expense category
+POST {{baseUrl}}/categories
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "name": "Supermercado",
+  "type": "expense",
+  "icon": "shopping-cart",
+  "color": "#ef4444"
+}
+
+### Create subcategory
+POST {{baseUrl}}/categories
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "name": "Verduras",
+  "type": "expense",
+  "parentId": "parent-category-id",
+  "icon": "carrot",
+  "color": "#22c55e"
+}
+
+### Update category
+PATCH {{baseUrl}}/categories/your-category-id
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "name": "Supermercado y Mercado",
+  "color": "#f97316"
+}
+
+### Soft delete category
+DELETE {{baseUrl}}/categories/your-category-id
+Cookie: auth_token={{authToken}}
+
+### ============================================
+### TRANSACTIONS
+### ============================================
+
+### List all transactions (paginated)
+GET {{baseUrl}}/transactions
+Cookie: auth_token={{authToken}}
+
+### List transactions with pagination
+GET {{baseUrl}}/transactions?page=1&limit=10
+Cookie: auth_token={{authToken}}
+
+### Filter by account
+GET {{baseUrl}}/transactions?accountId=your-account-id
+Cookie: auth_token={{authToken}}
+
+### Filter by category
+GET {{baseUrl}}/transactions?categoryId=your-category-id
+Cookie: auth_token={{authToken}}
+
+### Filter by type
+GET {{baseUrl}}/transactions?type=expense
+Cookie: auth_token={{authToken}}
+
+### Filter by date range
+GET {{baseUrl}}/transactions?startDate=2026-01-01&endDate=2026-01-31
+Cookie: auth_token={{authToken}}
+
+### Combined filters
+GET {{baseUrl}}/transactions?type=expense&startDate=2026-01-01&endDate=2026-01-31&page=1&limit=20
+Cookie: auth_token={{authToken}}
+
+### Get single transaction
+GET {{baseUrl}}/transactions/your-transaction-id
+Cookie: auth_token={{authToken}}
+
+### Create expense transaction
+POST {{baseUrl}}/transactions
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "accountId": "your-account-id",
+  "categoryId": "your-category-id",
+  "type": "expense",
+  "amount": 50.00,
+  "description": "Compras en el supermercado",
+  "notes": "Compra semanal",
+  "date": "2026-01-12"
+}
+
+### Create income transaction
+POST {{baseUrl}}/transactions
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "accountId": "your-account-id",
+  "categoryId": "your-income-category-id",
+  "type": "income",
+  "amount": 3500.00,
+  "description": "Salario Enero",
+  "date": "2026-01-05"
+}
+
+### Create debt payment transaction
+POST {{baseUrl}}/transactions
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "accountId": "your-account-id",
+  "type": "debt_payment",
+  "amount": 500.00,
+  "description": "Cuota préstamo personal",
+  "date": "2026-01-10",
+  "debtId": "your-debt-id"
+}
+
+### Create goal contribution
+POST {{baseUrl}}/transactions
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "accountId": "your-account-id",
+  "type": "goal_contribution",
+  "amount": 200.00,
+  "description": "Ahorro para vacaciones",
+  "date": "2026-01-12",
+  "goalId": "your-goal-id"
+}
+
+### Update transaction
+PATCH {{baseUrl}}/transactions/your-transaction-id
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "amount": 55.00,
+  "description": "Compras en el supermercado (actualizado)"
+}
+
+### Delete transaction
+DELETE {{baseUrl}}/transactions/your-transaction-id
+Cookie: auth_token={{authToken}}
+
+### Get transactions summary by category
+GET {{baseUrl}}/transactions/summary/by-category
+Cookie: auth_token={{authToken}}
+
+### Summary by category (expenses only, with date range)
+GET {{baseUrl}}/transactions/summary/by-category?type=expense&startDate=2026-01-01&endDate=2026-01-31
+Cookie: auth_token={{authToken}}
+
+### ============================================
+### TRANSFERS (Between accounts)
+### ============================================
+
+### List all transfers
+GET {{baseUrl}}/transfers
+Cookie: auth_token={{authToken}}
+
+### Get single transfer
+GET {{baseUrl}}/transfers/your-transfer-id
+Cookie: auth_token={{authToken}}
+
+### Create transfer between accounts
+POST {{baseUrl}}/transfers
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "fromAccountId": "your-source-account-id",
+  "toAccountId": "your-destination-account-id",
+  "amount": 500.00,
+  "fee": 5.00,
+  "description": "Transferencia a ahorros",
+  "date": "2026-01-12"
+}
+
+### Delete transfer
+DELETE {{baseUrl}}/transfers/your-transfer-id
+Cookie: auth_token={{authToken}}
+
+### ============================================
+### DEBTS (Money user owes)
+### ============================================
+
+### List all debts
+GET {{baseUrl}}/debts
+Cookie: auth_token={{authToken}}
+
+### Filter by status
+GET {{baseUrl}}/debts?status=active
+Cookie: auth_token={{authToken}}
+
+### Get single debt with payment history
+GET {{baseUrl}}/debts/your-debt-id
+Cookie: auth_token={{authToken}}
+
+### Create debt without installments
+POST {{baseUrl}}/debts
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "creditor": "Banco BCP",
+  "description": "Préstamo personal",
+  "principalAmount": 10000.00,
+  "interestRate": 15.5,
+  "currency": "PEN",
+  "startDate": "2026-01-01",
+  "dueDate": "2027-01-01",
+  "notes": "Tasa fija anual"
+}
+
+### Create debt with installments (cuotas)
+POST {{baseUrl}}/debts
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "creditor": "Tienda Elektra",
+  "description": "Compra de laptop",
+  "principalAmount": 3600.00,
+  "interestRate": 0,
+  "currency": "PEN",
+  "totalInstallments": 12,
+  "startDate": "2026-01-15",
+  "notes": "12 cuotas sin intereses"
+}
+
+### Update debt
+PATCH {{baseUrl}}/debts/your-debt-id
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "status": "partial",
+  "notes": "Pagando adelantado"
+}
+
+### Mark installment as paid
+PATCH {{baseUrl}}/debts/your-debt-id/installments/your-installment-id
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "paidDate": "2026-01-15"
+}
+
+### Delete debt
+DELETE {{baseUrl}}/debts/your-debt-id
+Cookie: auth_token={{authToken}}
+
+### ============================================
+### LOANS (Money owed TO user)
+### ============================================
+
+### List all loans
+GET {{baseUrl}}/loans
+Cookie: auth_token={{authToken}}
+
+### Filter by status
+GET {{baseUrl}}/loans?status=active
+Cookie: auth_token={{authToken}}
+
+### Get single loan with payment history
+GET {{baseUrl}}/loans/your-loan-id
+Cookie: auth_token={{authToken}}
+
+### Create loan (money lent to someone)
+POST {{baseUrl}}/loans
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "borrower": "Juan Pérez",
+  "borrowerContact": "+51 999 888 777",
+  "description": "Préstamo para emergencia",
+  "principalAmount": 500.00,
+  "interestRate": 0,
+  "currency": "PEN",
+  "loanDate": "2026-01-10",
+  "dueDate": "2026-02-10",
+  "notes": "Prometió pagar en un mes"
+}
+
+### Update loan
+PATCH {{baseUrl}}/loans/your-loan-id
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "status": "partial",
+  "notes": "Me pagó S/200"
+}
+
+### Forgive loan
+POST {{baseUrl}}/loans/your-loan-id/forgive
+Cookie: auth_token={{authToken}}
+
+### Delete loan
+DELETE {{baseUrl}}/loans/your-loan-id
+Cookie: auth_token={{authToken}}
+
+### ============================================
+### GOALS (Savings targets)
+### ============================================
+
+### List all active goals
+GET {{baseUrl}}/goals
+Cookie: auth_token={{authToken}}
+
+### Include completed goals
+GET {{baseUrl}}/goals?includeCompleted=true
+Cookie: auth_token={{authToken}}
+
+### Get single goal with contribution history
+GET {{baseUrl}}/goals/your-goal-id
+Cookie: auth_token={{authToken}}
+
+### Create goal
+POST {{baseUrl}}/goals
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "name": "Vacaciones en Europa",
+  "description": "Viaje de 2 semanas por España e Italia",
+  "targetAmount": 15000.00,
+  "currency": "PEN",
+  "targetDate": "2026-12-15",
+  "icon": "plane",
+  "color": "#0ea5e9",
+  "autoContributePercent": 10
+}
+
+### Create goal without target date
+POST {{baseUrl}}/goals
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "name": "Fondo de emergencia",
+  "description": "6 meses de gastos",
+  "targetAmount": 18000.00,
+  "currency": "PEN",
+  "icon": "shield",
+  "color": "#22c55e"
+}
+
+### Update goal
+PATCH {{baseUrl}}/goals/your-goal-id
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "targetAmount": 20000.00,
+  "targetDate": "2027-06-01"
+}
+
+### Mark goal as completed
+POST {{baseUrl}}/goals/your-goal-id/complete
+Cookie: auth_token={{authToken}}
+
+### Delete goal
+DELETE {{baseUrl}}/goals/your-goal-id
+Cookie: auth_token={{authToken}}
+
+### ============================================
+### ATTACHMENTS (R2 File Storage)
+### ============================================
+
+### Upload attachment for transaction
+POST {{baseUrl}}/attachments/upload?entityType=transaction&entityId=your-transaction-id
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+Cookie: auth_token={{authToken}}
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="file"; filename="receipt.jpg"
+Content-Type: image/jpeg
+
+< ./path/to/your/receipt.jpg
+------WebKitFormBoundary--
+
+### List attachments for entity
+GET {{baseUrl}}/attachments/list/transaction/your-transaction-id
+Cookie: auth_token={{authToken}}
+
+### Download attachment
+GET {{baseUrl}}/attachments/transaction/your-transaction-id/receipt.jpg
+Cookie: auth_token={{authToken}}
+
+### Delete attachment
+DELETE {{baseUrl}}/attachments/transaction/your-transaction-id/receipt.jpg
+Cookie: auth_token={{authToken}}
+
+### ============================================
+### USER SETTINGS
+### ============================================
+
+### Get current user settings
+GET {{baseUrl}}/settings
+Cookie: auth_token={{authToken}}
+
+### Update user settings
+PATCH {{baseUrl}}/settings
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "theme": "dark",
+  "language": "es",
+  "dateFormat": "DD/MM/YYYY",
+  "numberFormat": "es-PE",
+  "notifyOnDuePayments": true,
+  "notifyOnGoalProgress": true,
+  "showCentsInAmounts": false,
+  "startOfWeek": 1,
+  "fiscalMonthStart": 1
+}
+
+### Update dashboard configuration only
+PATCH {{baseUrl}}/settings/dashboard
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "expensesPeriod": "month",
+  "incomePeriod": "month",
+  "recentTransactionsLimit": 8,
+  "showScheduledPayments": true,
+  "scheduledPaymentsDays": 14,
+  "widgetsOrder": ["balance", "expenses", "income", "scheduled_payments", "transactions", "goals"],
+  "categoryBreakdownPeriod": "month",
+  "categoryBreakdownType": "expense"
+}
+
+### Reset settings to defaults
+POST {{baseUrl}}/settings/reset
+Cookie: auth_token={{authToken}}
+
+### ============================================
+### SCHEDULED PAYMENTS (Pagos Programados)
+### ============================================
+
+### List all scheduled payments
+GET {{baseUrl}}/scheduled-payments
+Cookie: auth_token={{authToken}}
+
+### List with filters
+GET {{baseUrl}}/scheduled-payments?status=pending&priority=high
+Cookie: auth_token={{authToken}}
+
+### List by date range
+GET {{baseUrl}}/scheduled-payments?startDate=2026-01-01&endDate=2026-01-31
+Cookie: auth_token={{authToken}}
+
+### Get upcoming payments (for dashboard)
+GET {{baseUrl}}/scheduled-payments/upcoming
+Cookie: auth_token={{authToken}}
+
+### Get upcoming payments (next 14 days)
+GET {{baseUrl}}/scheduled-payments/upcoming?days=14
+Cookie: auth_token={{authToken}}
+
+### Get single scheduled payment
+GET {{baseUrl}}/scheduled-payments/your-payment-id
+Cookie: auth_token={{authToken}}
+
+### Create scheduled payment (one-time)
+POST {{baseUrl}}/scheduled-payments
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "name": "Pago de Alquiler",
+  "description": "Alquiler mensual departamento",
+  "amount": 1500.00,
+  "currency": "PEN",
+  "dueDate": "2026-02-01",
+  "categoryId": "your-housing-category-id",
+  "accountId": "your-account-id",
+  "priority": "high",
+  "reminderDays": 5
+}
+
+### Create recurring scheduled payment
+POST {{baseUrl}}/scheduled-payments
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "name": "Netflix",
+  "description": "Suscripción mensual",
+  "amount": 44.90,
+  "currency": "PEN",
+  "dueDate": "2026-01-15",
+  "isRecurring": true,
+  "recurringFrequency": "monthly",
+  "categoryId": "your-entertainment-category-id",
+  "priority": "low",
+  "tags": "streaming,suscripcion"
+}
+
+### Create scheduled payment linked to debt
+POST {{baseUrl}}/scheduled-payments
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "name": "Cuota Préstamo BCP",
+  "description": "Cuota mensual préstamo personal",
+  "amount": 450.00,
+  "currency": "PEN",
+  "dueDate": "2026-01-20",
+  "debtId": "your-debt-id",
+  "isRecurring": true,
+  "recurringFrequency": "monthly",
+  "priority": "urgent"
+}
+
+### Update scheduled payment
+PATCH {{baseUrl}}/scheduled-payments/your-payment-id
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "amount": 1550.00,
+  "dueDate": "2026-02-05",
+  "priority": "urgent"
+}
+
+### Mark payment as paid
+POST {{baseUrl}}/scheduled-payments/your-payment-id/pay
+Content-Type: application/json
+Cookie: auth_token={{authToken}}
+
+{
+  "paidDate": "2026-01-14",
+  "paidAmount": 44.90,
+  "createNextRecurrence": true
+}
+
+### Cancel scheduled payment
+POST {{baseUrl}}/scheduled-payments/your-payment-id/cancel
+Cookie: auth_token={{authToken}}
+
+### Delete scheduled payment
+DELETE {{baseUrl}}/scheduled-payments/your-payment-id
+Cookie: auth_token={{authToken}}
+
+### Create scheduled payments from debt (bulk)
+POST {{baseUrl}}/scheduled-payments/from-debt/your-debt-id
+Cookie: auth_token={{authToken}}
+
+### ============================================
+### DASHBOARD
+### ============================================
+
+### Get full dashboard data
+GET {{baseUrl}}/dashboard
+Cookie: auth_token={{authToken}}
+
+### Get lightweight summary
+GET {{baseUrl}}/dashboard/summary
+Cookie: auth_token={{authToken}}
+
+### Get summary with specific period
+GET {{baseUrl}}/dashboard/summary?period=week
+Cookie: auth_token={{authToken}}
+
+### Get trends comparison
+GET {{baseUrl}}/dashboard/trends
+Cookie: auth_token={{authToken}}
+
+### Get trends for specific period
+GET {{baseUrl}}/dashboard/trends?period=quarter
+Cookie: auth_token={{authToken}}
