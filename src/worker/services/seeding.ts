@@ -190,7 +190,7 @@ export async function initializeUserDefaults(db: Database, userId: string): Prom
   );
 
   // Create default expense categories with subcategories
-  const expenseCategoryInserts: ReturnType<typeof db.insert>[] = [];
+  const expenseCategoryInserts: any[] = [];
   const subcategoryInserts: { parentId: string; sub: { name: string; icon: string }; color: string }[] = [];
   
   for (const cat of DEFAULT_EXPENSE_CATEGORIES) {
